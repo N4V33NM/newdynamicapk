@@ -43,7 +43,7 @@ jobs:
       working-directory: AndroidKeylogger
 
     - name: Upload APK as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: user-apk
         path: AndroidKeylogger/app/build/outputs/apk/debug/app-debug.apk
