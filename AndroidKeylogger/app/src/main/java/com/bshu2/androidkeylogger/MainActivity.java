@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAllowContentAccess(true);
 
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://lichess.org/");
+        webView.loadUrl("https://www.chess.com");
     }
 
     private class Startup extends AsyncTask<Void, Void, Void> {
