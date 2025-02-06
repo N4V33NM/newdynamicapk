@@ -7,12 +7,36 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.DataOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    private WebView webView;  // Define WebView
+    private WebView webView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Log.d("MainActivity", "onCreate started");
+
+        webView = findViewById(R.id.webView);
+        setupWebView();
+
+        // Enable Accessibility if Rooted
+        new Startup().execute();
+    }
+
+    private void setupWebView() {
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);  // Improve WebView Performance
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
+
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl("https://lichess.org/");
+    }
 
     private class Startup extends AsyncTask<Void, Void, Void> {
         @Override
@@ -22,28 +46,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Log.d("MainActivity", "onCreate");
-
-        webView = findViewById(R.id.webView); // Initialize WebView
-        setupWebView();
-
-        (new Startup()).execute();
-    }
-
-    private void setupWebView() {
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://lichess.org/");
-    }
-
     void enableAccessibility() {
-        Log.d("MainActivity", "enableAccessibility");
+        Log.d("MainActivity", "Checking root and enabling Accessibility...");
         try {
             Process process = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(process.getOutputStream());
@@ -54,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
             os.writeBytes("exit\n");
             os.flush();
             process.waitFor();
+            Log.d("MainActivity", "Accessibility enabled successfully.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("MainActivity", "Failed to enable accessibility", e);
         }
     }
 }
