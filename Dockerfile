@@ -1,15 +1,21 @@
-# Use slim Python image
-FROM python:3.10-slim
+# Use an official Python runtime as base
+FROM python:3.11-slim
 
-# Install pip dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Copy all project files
-COPY . .
+# Set working directory
+WORKDIR /app
 
-# Expose the port Flask uses
+# Copy the contents of your repo to the container
+COPY . /app
+
+# Install dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Expose the port Flask/Gunicorn will run on
 EXPOSE 5000
 
-# Start the Flask bot
-CMD ["python", "bot.py"]
+# Run the app using gunicorn
+CMD ["gunicorn", "bot:app", "--bind", "0.0.0.0:5000"]
