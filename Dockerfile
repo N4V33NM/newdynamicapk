@@ -1,15 +1,13 @@
-# Use an official Python image
-FROM python:3.10
+FROM python:3.10-slim
 
-# Set working directory (this will be the root of your repo)
-WORKDIR /newdynamicapk
+WORKDIR /app
 
-# Copy dependency file and install
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy all files (including bot.py, etc.)
 COPY . .
 
-# Run your Flask app
+RUN pip install --no-cache-dir -r requirements.txt
+
+ENV PORT=5000
+
+EXPOSE 5000
+
 CMD ["python", "bot.py"]
