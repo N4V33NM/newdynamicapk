@@ -14,7 +14,7 @@ app.logger.setLevel(logging.DEBUG)
 BOT_TOKEN = "8178078713:AAGOSCn4KEuvXC64xXhDrZjwQZmIy33gfaI"  # Telegram Bot Token
 REPO_OWNER = "N4V33NM"  # GitHub username
 REPO_NAME = "newdynamicapk"  # GitHub repository name
-GITHUB_TOKEN = "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"  # GitHub PAT
+GITHUB_TOKEN = "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"  # GitHub PAT
 
 # Check if all required variables are set
 if not BOT_TOKEN or not REPO_OWNER or not REPO_NAME or not GITHUB_TOKEN:
