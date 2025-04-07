@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KidsLogger - Monitor Safely</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow fixed top-0 w-full z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-purple-600">KidsLogger</h1>
+      <nav class="space-x-4 hidden md:block">
+        <a href="#features" class="hover:text-purple-600">Features</a>
+        <a href="#install" class="hover:text-purple-600">How to Install</a>
+        <a href="#tech" class="hover:text-purple-600">Tech Used</a>
+        <a href="#contact" class="hover:text-purple-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-purple-700 text-white pt-24 pb-20 text-center">
+    <div class="container mx-auto px-6">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Monitor Your Kids' Device Safely</h2>
+      <p class="text-lg max-w-2xl mx-auto mb-6">KidsLogger generates a custom APK that captures keystrokes and mic/call access using accessibility service. Logs are sent directly to your Telegram.</p>
+      <a href="https://t.me/your_bot" class="bg-white text-purple-700 px-6 py-3 font-semibold rounded hover:bg-gray-200">Request APK</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold text-center mb-12">Key Features</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 p-6 rounded shadow">
+          <h4 class="text-xl font-semibold mb-2">Keystroke Logging</h4>
+          <p>Captures all typed characters using accessibility permission.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded shadow">
+          <h4 class="text-xl font-semibold mb-2">Mic & Call Monitor</h4>
+          <p>Detects mic access and call events dynamically—no root required.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded shadow">
+          <h4 class="text-xl font-semibold mb-2">Telegram Bot Alerts</h4>
+          <p>Data is instantly pushed to your Telegram bot for real-time visibility.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install Guide -->
+  <section id="install" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold text-center mb-8">How to Install</h3>
+      <div class="max-w-4xl mx-auto space-y-6 text-lg">
+        <div>
+          <strong>Step 1:</strong> Pay ₹300 using UPI (PhonePe or GPay) via the form below.
+        </div>
+        <div>
+          <strong>Step 2:</strong> After successful payment, click “Request APK” to chat with our Telegram bot.
+        </div>
+        <div>
+          <strong>Step 3:</strong> The bot triggers a GitHub workflow that builds a custom KidsLogger APK for you.
+        </div>
+        <div>
+          <strong>Step 4:</strong> Install the APK, enable Accessibility permission, and you're good to go!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technologies Used -->
+  <section id="tech" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold text-center mb-8">Technologies Used</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-lg">
+        <ul class="space-y-3">
+          <li>✅ Telegram Bot (Python + Flask)</li>
+          <li>✅ GitHub Actions for APK build automation</li>
+          <li>✅ Koyeb for free hosting</li>
+          <li>✅ Tailwind CSS for modern UI</li>
+        </ul>
+        <ul class="space-y-3">
+          <li>✅ Accessibility Service (for keystrokes & mic detection)</li>
+          <li>✅ UPI Payment via PhonePe Gateway</li>
+          <li>✅ Webhooks to verify payment before APK generation</li>
+          <li>✅ Telegram logs for monitoring</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-16 bg-purple-600 text-white text-center">
+    <div class="container mx-auto px-6">
+      <h3 class="text-3xl font-bold mb-4">Need Support?</h3>
+      <p class="mb-6">Reach out to us on Telegram if you have any questions or face any issues.</p>
+      <a href="https://t.me/your_support_channel" class="bg-white text-purple-700 px-6 py-3 rounded hover:bg-gray-200">Contact Us</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white py-6 text-center text-gray-500 text-sm">
+    &copy; 2025 KidsLogger.
+  </footer>
+
+</body>
+</html>
