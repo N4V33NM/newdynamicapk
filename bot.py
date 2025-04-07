@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, render_template
 import requests
 import logging
 
@@ -10,13 +10,19 @@ app.logger.setLevel(logging.DEBUG)
 
 # Configuration from environment
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-REPO_OWNER = os.getenv("REPO_OWNER")  # Now from env
+REPO_OWNER = os.getenv("REPO_OWNER")
 REPO_NAME = os.getenv("REPO_NAME")
-GITHUB_PAT = os.getenv("GITHUB_PAT")  # GitHub PAT from environment now
+GITHUB_PAT = os.getenv("GITHUB_PAT")
 
 if not BOT_TOKEN or not REPO_OWNER or not REPO_NAME or not GITHUB_PAT:
     raise ValueError("BOT_TOKEN, REPO_OWNER, REPO_NAME, or GITHUB_PAT is missing from environment variables.")
 
+# Route to serve index.html
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("index.html")
+
+# Telegram webhook route
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def handle_message():
     data = request.json
