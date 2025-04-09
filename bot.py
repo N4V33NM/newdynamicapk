@@ -17,7 +17,7 @@ CASHFREE_APP_ID = os.getenv("CASHFREE_APP_ID")
 CASHFREE_SECRET_KEY = os.getenv("CASHFREE_SECRET_KEY")
 PAID_USERS_FILE = "paid_users.json"
 
-# Validate required config
+# Validate config
 if not all([BOT_TOKEN, REPO_OWNER, REPO_NAME, GITHUB_PAT, CASHFREE_APP_ID, CASHFREE_SECRET_KEY]):
     raise ValueError("One or more required environment variables are missing.")
 
@@ -25,18 +25,23 @@ if not all([BOT_TOKEN, REPO_OWNER, REPO_NAME, GITHUB_PAT, CASHFREE_APP_ID, CASHF
 def load_paid_users():
     if not os.path.exists(PAID_USERS_FILE):
         return []
-    with open(PAID_USERS_FILE, "r") as f:
-        return json.load(f)
+    try:
+        with open(PAID_USERS_FILE, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        app.logger.warning("paid_users.json is corrupted. Resetting.")
+        return []
 
 def save_paid_user(chat_id):
     users = load_paid_users()
+    chat_id = str(chat_id)
     if chat_id not in users:
         users.append(chat_id)
         with open(PAID_USERS_FILE, "w") as f:
             json.dump(users, f)
 
 def is_user_paid(chat_id):
-    return chat_id in load_paid_users()
+    return str(chat_id) in load_paid_users()
 
 # Home route
 @app.route("/", methods=["GET"])
@@ -46,11 +51,15 @@ def home():
 # Telegram webhook
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def handle_message():
-    data = request.json
+    if not request.is_json:
+        return "Expected JSON", 400
+
+    data = request.get_json()
     app.logger.debug(f"Telegram data: {data}")
 
-    chat_id = data.get("message", {}).get("chat", {}).get("id")
-    command = data.get("message", {}).get("text")
+    message = data.get("message", {})
+    chat_id = str(message.get("chat", {}).get("id"))
+    command = message.get("text", "").strip()
 
     if not chat_id or not command:
         return "Invalid data", 400
@@ -87,7 +96,7 @@ def handle_message():
 
     return "OK"
 
-# GitHub Trigger
+# Trigger GitHub Action
 def trigger_github_action(chat_id):
     url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/build.yml/dispatches"
     payload = {
@@ -105,7 +114,7 @@ def trigger_github_action(chat_id):
         app.logger.error(f"GitHub Trigger Exception: {e}")
         return None
 
-# Telegram Send
+# Telegram Send Message
 def send_message(chat_id, text, parse_mode=None):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {"chat_id": chat_id, "text": text}
@@ -117,13 +126,13 @@ def send_message(chat_id, text, parse_mode=None):
     except Exception as e:
         app.logger.error(f"Telegram Error: {e}")
 
-# Cashfree Create Order
+# Create Cashfree Order
 def create_cashfree_order(chat_id):
     url = "https://sandbox.cashfree.com/pg/orders"
     headers = {
         "x-client-id": CASHFREE_APP_ID,
         "x-client-secret": CASHFREE_SECRET_KEY,
-        "x-api-version": "2022-09-01",  # ✅ Added required version
+        "x-api-version": "2022-09-01",
         "Content-Type": "application/json"
     }
     order_id = f"kidslogger_{chat_id}"
@@ -142,11 +151,9 @@ def create_cashfree_order(chat_id):
     }
     try:
         res = requests.post(url, headers=headers, json=payload)
-        if res.status_code == 200:
-            return res.json().get("payment_link")
-        else:
-            app.logger.error(f"Cashfree error: {res.text}")
-            return None
+        app.logger.debug(f"Cashfree Response: {res.status_code} - {res.text}")
+        data = res.json()
+        return data.get("payment_link")
     except Exception as e:
         app.logger.error(f"Cashfree exception: {e}")
         return None
