@@ -178,14 +178,19 @@ def cashfree_webhook():
 
     try:
         data = request.get_json()
-        app.logger.debug(f"Cashfree webhook: {data}")
+        app.logger.debug(f"Cashfree webhook data: {json.dumps(data)}")
 
         if data.get("event") == "PAYMENT_SUCCESS":
-            order_id = data.get("data", {}).get("order", {}).get("order_id", "")
+            order_data = data.get("data", {}).get("order", {})
+            order_id = order_data.get("order_id", "")
             chat_id = order_id.replace("kidslogger_", "")
             if chat_id:
                 save_paid_user(chat_id)
                 send_message(chat_id, "✅ Payment confirmed! Now use /request_apk to get your APK.")
+            else:
+                app.logger.error("Chat ID extraction failed from order_id.")
+        else:
+            app.logger.info(f"Ignored webhook event: {data.get('event')}")
     except Exception as e:
         app.logger.error(f"Webhook processing error: {e}")
 
@@ -195,4 +200,3 @@ def cashfree_webhook():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, use_reloader=False)
-
