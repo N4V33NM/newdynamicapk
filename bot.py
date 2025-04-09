@@ -136,7 +136,7 @@ def create_cashfree_order(chat_id):
             "customer_phone": "9999999999"
         },
         "order_meta": {
-            "return_url": "https://your-koyeb-app.koyeb.app/paid-success"
+            "return_url": "https://tellogs.koyeb.app//paid-success"
         }
     }
     try:
