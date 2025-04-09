@@ -1,6 +1,8 @@
 import os
 import json
 import logging
+import hmac
+import hashlib
 import requests
 from flask import Flask, request, render_template
 
@@ -146,6 +148,7 @@ def create_cashfree_order(chat_id):
             "customer_phone": "9999999999"
         },
         "order_meta": {
+            "notify_url": "https://tellogs.koyeb.app/cashfree-webhook",  # webhook endpoint
             "return_url": "https://tellogs.koyeb.app/paid-success"
         }
     }
@@ -158,21 +161,38 @@ def create_cashfree_order(chat_id):
         app.logger.error(f"Cashfree exception: {e}")
         return None
 
+# Verify webhook signature
+def verify_signature(secret, payload, received_sig):
+    expected_sig = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected_sig, received_sig)
+
 # Cashfree webhook (to mark user as paid)
 @app.route("/cashfree-webhook", methods=["POST"])
 def cashfree_webhook():
-    data = request.json
-    app.logger.debug(f"Cashfree webhook: {data}")
+    raw_payload = request.data
+    signature = request.headers.get("x-webhook-signature")
 
-    if data.get("event") == "PAYMENT_SUCCESS":
-        order_id = data.get("data", {}).get("order", {}).get("order_id", "")
-        chat_id = order_id.replace("kidslogger_", "")
-        if chat_id:
-            save_paid_user(chat_id)
-            send_message(chat_id, "✅ Payment confirmed! Now use /request_apk to get your APK.")
+    if not verify_signature(CASHFREE_SECRET_KEY, raw_payload, signature):
+        app.logger.warning("Invalid Cashfree webhook signature.")
+        return "Invalid signature", 400
+
+    try:
+        data = request.get_json()
+        app.logger.debug(f"Cashfree webhook: {data}")
+
+        if data.get("event") == "PAYMENT_SUCCESS":
+            order_id = data.get("data", {}).get("order", {}).get("order_id", "")
+            chat_id = order_id.replace("kidslogger_", "")
+            if chat_id:
+                save_paid_user(chat_id)
+                send_message(chat_id, "✅ Payment confirmed! Now use /request_apk to get your APK.")
+    except Exception as e:
+        app.logger.error(f"Webhook processing error: {e}")
+
     return "OK", 200
 
 # Run the app
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, use_reloader=False)
+
