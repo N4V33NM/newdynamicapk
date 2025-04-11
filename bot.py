@@ -1,4 +1,4 @@
-# Updated Kidslogger Flask App
+# Updated Kidslogger Flask App with channel ID
 import os
 import logging
 import hmac
@@ -17,6 +17,7 @@ REPO_NAME = os.getenv("REPO_NAME")
 GITHUB_PAT = os.getenv("GITHUB_PAT")
 CASHFREE_APP_ID = os.getenv("CASHFREE_APP_ID")
 CASHFREE_SECRET_KEY = os.getenv("CASHFREE_SECRET_KEY")
+CHANNEL_ID = "-1002264821568"  # ✅ Your private channel ID
 
 if not all([BOT_TOKEN, REPO_OWNER, REPO_NAME, GITHUB_PAT, CASHFREE_APP_ID, CASHFREE_SECRET_KEY]):
     raise ValueError("Missing one or more required environment variables.")
@@ -54,7 +55,7 @@ def handle_message():
             else:
                 send_message(chat_id, "\u274C Error generating APK. Try again later.")
         else:
-            send_message(chat_id, "\u26D4 You must join our private channel https://t.me/Tellogs to use this command.")
+            send_message(chat_id, "\u26D4 You must join our private channel to use this command.")
 
     else:
         send_message(chat_id, "\u2753 Unknown command. Use /start for help.")
@@ -72,7 +73,7 @@ def send_message(chat_id, text, parse_mode=None):
         app.logger.error(f"Telegram Error: {e}")
 
 def is_user_in_channel(chat_id):
-    check_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember?chat_id=@Tellogs&user_id={chat_id}"
+    check_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember?chat_id={CHANNEL_ID}&user_id={chat_id}"
     try:
         res = requests.get(check_url)
         data = res.json()
@@ -105,13 +106,13 @@ def generate_one_time_invite():
     try:
         resp = requests.post(
             f"https://api.telegram.org/bot{BOT_TOKEN}/exportChatInviteLink",
-            data={"chat_id": "@Tellogs"}
+            data={"chat_id": CHANNEL_ID}
         )
         data = resp.json()
         return data.get("result")
     except Exception as e:
         app.logger.error(f"Invite generation failed: {e}")
-        return "https://t.me/Tellogs"
+        return "https://t.me/Tellogs"  # fallback if generation fails
 
 @app.route("/cashfree-webhook", methods=["POST"])
 def cashfree_webhook():
@@ -139,3 +140,4 @@ def verify_signature(secret, payload, received_sig):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, use_reloader=False)
+
